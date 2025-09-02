@@ -1,0 +1,55 @@
+<launch>
+  <!-- Launch the LLM-driven Behavior Tree Generator System -->
+  
+  <!-- Set LLM model configuration -->
+  <arg name="model_name" default="tiiuae/falcon-rw-1b" />
+  <arg name="device" default="0" />
+  
+  <!-- Launch the LLM tree generator node -->
+  <node name="llm_tree_generator" 
+        pkg="llm_bt_grasp" 
+        type="llm_tree_generator_cli.py" 
+        output="screen"
+        args="--model $(arg model_name) --device $(arg device) --interactive">
+    
+    <!-- Set LLM parameters -->
+    <param name="model_name" value="$(arg model_name)" />
+    <param name="device" value="$(arg device)" />
+    
+  </node>
+  
+  <!-- Launch the status monitor -->
+  <node name="status_monitor" 
+        pkg="llm_bt_grasp" 
+        type="status_monitor.py" 
+        output="screen">
+  </node>
+  
+  <!-- Launch rqt_py_trees for visualization -->
+  <node name="rqt_py_trees" 
+        pkg="rqt_py_trees" 
+        type="rqt_py_trees" 
+        output="screen">
+    <param name="tree_topic" value="/generated_behavior_tree" />
+  </node>
+  
+
+  
+  <!-- Launch vision simulator for testing -->
+  <node name="vision_simulator" 
+        pkg="llm_bt_grasp" 
+        type="vision_simulator.py" 
+        output="screen">
+    <param name="object_name" value="red cube" />
+    <param name="target_name" value="green box" />
+  </node>
+  
+  <!-- Launch a simple robot controller for testing -->
+  <node name="mock_robot_controller" 
+        pkg="llm_bt_grasp" 
+        type="robot_controller.py" 
+        output="screen">
+    <param name="robot_mode" value="virtual" />
+  </node>
+  
+</launch>
